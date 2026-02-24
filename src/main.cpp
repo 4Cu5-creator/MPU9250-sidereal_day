@@ -35,7 +35,9 @@ int main(int argc, char* argv[])
     i2cWriteByteData(device_handle, PWR_MGMT_1_ADDR, PWR_MGMT_1_VAL);
     set_gyro(device_handle, 250);
     set_accel(device_handle, 2);
-    enable_fifo(device_handle);
+    i2cWriteByteData(device_handle, USER_CTRL, 0x04); // FIFO Reset
+    i2cWriteByteData(device_handle, FIFO_EN, 0x78);   // Enable Accel and Gyro (X,Y,Z) to FIFO
+    i2cWriteByteData(device_handle, USER_CTRL, 0x40); // Enable FIFO mode
 
     device_wait(100);
     std::cout << "Starting Acquisition for " << Acquisition_Time << " seconds, " << Num_Reads << " times...\n";
@@ -160,9 +162,3 @@ int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz)
 }
 
 
-void enable_fifo(int device_handle) {
-    // 1. Reset FIFO and Signal Paths
-    i2cWriteByteData(device_handle, USER_CTRL, 0x04); // FIFO Reset
-    i2cWriteByteData(device_handle, FIFO_EN, 0x78);   // Enable Accel and Gyro (X,Y,Z) to FIFO
-    i2cWriteByteData(device_handle, USER_CTRL, 0x40); // Enable FIFO mode
-}
