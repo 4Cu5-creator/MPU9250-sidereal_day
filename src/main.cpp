@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     i2cWriteByteData(device_handle, PWR_MGMT_1_ADDR, PWR_MGMT_1_VAL);
     set_gyro(device_handle, 250);
     set_accel(device_handle, 2);
+    enable_fifo(device_handle);
 
     device_wait(100);
     std::cout << "Starting Acquisition for " << Acquisition_Time << " seconds, " << Num_Reads << " times...\n";
@@ -100,59 +101,68 @@ int main(int argc, char* argv[])
 }
 
 //Read Data
-int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz ) {
+int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz) {
     struct timespec start, now, last_read;
     double total_time = 0;
     double g_x_sum = 0, g_y_sum = 0, g_z_sum = 0;
 
+    // We need to know the sensitivity to convert raw bits to deg/s
+    // For 250 deg/s scale, the divisor is 131.0
+    const double GYRO_SENS = 131.0; 
+
     clock_gettime(CLOCK_MONOTONIC, &start);
     last_read = start;
 
-    // CountDown
-    for(int i = 3; i > 0; i--) {
-        std::cout << i << "...\n";
-        device_wait(1000);
-    }
-
-    //Integration
     do {
-        clock_gettime(CLOCK_MONOTONIC, &now);
-        double dt = (now.tv_sec - last_read.tv_sec) +
-                    (now.tv_nsec - last_read.tv_nsec) / 1e9;
-        last_read = now;
+        // Check how many bytes are in the FIFO
+        int countH = i2cReadByteData(device_handle, 0x72); // FIFO_COUNTH
+        int countL = i2cReadByteData(device_handle, 0x73); // FIFO_COUNTL
+        int count = (countH << 8) | countL;
 
-        double gx = get_gyro_x(device_handle);
-        double gy = get_gyro_y(device_handle);
-        double gz = get_gyro_z(device_handle);
-        
-        //Deg/s --> Rad/s
-        gx = deg2rad(gx);
-        gy = deg2rad(gy);
-        gz = deg2rad(gz);
+        // Each packet (Accel+Gyro) is 12 bytes. Let's wait for at least one packet.
+        if (count >= 12) {
+            uint8_t buffer[12];
+            // Read 12 bytes in one burst from FIFO_R_W register (0x74)
+            i2cReadI2CBlockData(device_handle, 0x74, (char*)buffer, 12);
 
-        g_x_sum += gx * dt;
-        g_y_sum += gy * dt;
-        g_z_sum += gz * dt;
-        total_time += dt;
+            // Extract Gyro Data (Bytes 6-11 in the 12-byte packet)
+            int16_t raw_gx = (buffer[6] << 8) | buffer[7];
+            int16_t raw_gy = (buffer[8] << 8) | buffer[9];
+            int16_t raw_gz = (buffer[10] << 8) | buffer[11];
 
-        double elapsed = (now.tv_sec - start.tv_sec) +
-                         (now.tv_nsec - start.tv_nsec) / 1e9;
+            // Convert raw to rad/s
+            double gx = deg2rad((double)raw_gx / GYRO_SENS);
+            double gy = deg2rad((double)raw_gy / GYRO_SENS);
+            double gz = deg2rad((double)raw_gz / GYRO_SENS);
 
-        if ((int)elapsed % 5 == 0 && dt > 0) {
-             std::cout << "Acquiring... " << (int)elapsed << "s\r" << std::flush;
+            // Timing
+            clock_gettime(CLOCK_MONOTONIC, &now);
+            double dt = (now.tv_sec - last_read.tv_sec) + (now.tv_nsec - last_read.tv_nsec) / 1e9;
+            last_read = now;
+
+            // Integrate
+            g_x_sum += gx * dt;
+            g_y_sum += gy * dt;
+            g_z_sum += gz * dt;
+            total_time += dt;
         }
 
+        double elapsed = (now.tv_sec - start.tv_sec) + (now.tv_nsec - start.tv_nsec) / 1e9;
         if (elapsed >= Acquisition_Time) break;
 
     } while (true);
 
-    // Instead of creating new local variables, we assign the answers
-    // to the reference variables passed from main()
     out_gx = g_x_sum / total_time;
     out_gy = g_y_sum / total_time;
     out_gz = g_z_sum / total_time;
 
-    std::cout << "\nAverage Gyro (rad/s): " << out_gx << ", " << out_gy << ", " << out_gz << std::endl;
-
     return 0;
+}
+
+
+void enable_fifo(int device_handle) {
+    // 1. Reset FIFO and Signal Paths
+    i2cWriteByteData(device_handle, USER_CTRL, 0x04); // FIFO Reset
+    i2cWriteByteData(device_handle, FIFO_EN, 0x78);   // Enable Accel and Gyro (X,Y,Z) to FIFO
+    i2cWriteByteData(device_handle, USER_CTRL, 0x40); // Enable FIFO mode
 }
