@@ -43,6 +43,7 @@ command to run if program contains helper info
 * [mpu9250-with-raspberrypi](https://github.com/Alexgichamba/mpu9250-with-raspberrypi/tree/main)
 * [Pigpiod not installing under new official trixie release](https://github.com/joan2937/pigpio/issues/632)
 * [それでも地球は回っている!](https://elchika.com/article/2e2a5d67-8ae6-4c7c-b0fe-ec6be2e10566/)
+
 テンプレート
 * [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 * [dbader](https://github.com/dbader/readme-template)
