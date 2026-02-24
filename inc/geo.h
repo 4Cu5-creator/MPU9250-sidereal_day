@@ -7,5 +7,5 @@ double average(int N, double *A);
 double T(int l, int m, int n, double x, double y, double z);
 double radius_estimation(int N, double *x, double *y, double *z);
 double sidereal_day(double ang_vec);
-
+double deg2rad(double deg_per_sec);
 #endif
