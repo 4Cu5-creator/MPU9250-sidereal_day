@@ -114,6 +114,6 @@ double sidereal_day(double ang_vec){
 }
 
 double deg2rad(double deg_per_sec){
-        return deg_per_sec * (M_PI/180.0);
+        return deg_per_sec*(M_PI/180.0);
 }
 

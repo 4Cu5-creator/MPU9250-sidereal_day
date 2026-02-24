@@ -61,10 +61,6 @@ int main(int argc, char* argv[])
             return -3;
         }
 
-        //Deg/s --> Rad/s
-        current_gx = deg2rad(current_gx);
-        current_gx = deg2rad(current_gy);
-        current_gx = deg2rad(current_gz);
 
         //Saving Data in Array
         gyro_x[i] = current_gx;
@@ -128,6 +124,11 @@ int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz 
         double gx = get_gyro_x(device_handle);
         double gy = get_gyro_y(device_handle);
         double gz = get_gyro_z(device_handle);
+        
+        //Deg/s --> Rad/s
+        gx = deg2rad(gx);
+        gy = deg2rad(gy);
+        gz = deg2rad(gz);
 
         g_x_sum += gx * dt;
         g_y_sum += gy * dt;
@@ -151,7 +152,7 @@ int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz 
     out_gy = g_y_sum / total_time;
     out_gz = g_z_sum / total_time;
 
-    std::cout << "\nAverage Gyro (deg/s): " << out_gx << ", " << out_gy << ", " << out_gz << std::endl;
+    std::cout << "\nAverage Gyro (rad/s): " << out_gx << ", " << out_gy << ", " << out_gz << std::endl;
 
     return 0;
 }
