@@ -100,7 +100,7 @@ sudo fuser -k 8888/tcp
 sudo rm -f /var/run/pigpio.pid
 ```
 
-####プロクラム本体
+#### プロクラム本体
 このリポジトリを`clone`する。または、`.tar`のファイルをダウンロードし、展開する。
 ```
 git clone https://github.com/4Cu5-creator/MPU9250-sidereal_day.git
