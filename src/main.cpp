@@ -18,6 +18,13 @@
 #define Acquisition_Time 65
 #define IMU_Clock_Frequency 19200000.0
 
+//Address
+#define FIFO_EN          0x23
+#define I2C_MST_CTRL     0x24
+#define USER_CTRL        0x6A
+#define FIFO_COUNTH      0x72
+#define FIFO_COUNTL      0x73
+#define FIFO_R_W         0x74
 int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz);
 
 double gyro_x[Num_Reads];
