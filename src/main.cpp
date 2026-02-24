@@ -61,6 +61,11 @@ int main(int argc, char* argv[])
             return -3;
         }
 
+        //Deg/s --> Rad/s
+        current_gx = deg_2_rad(current_gx);
+        current_gx = deg_2_rad(current_gy);
+        current_gx = deg_2_rad(current_gz);
+
         //Saving Data in Array
         gyro_x[i] = current_gx;
         gyro_y[i] = current_gy;
