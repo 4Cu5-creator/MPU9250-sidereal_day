@@ -1,19 +1,19 @@
 Stats: 
 
 MAXIMUMS
-Temperature: 28.6576 at: Mon Feb 23 15:02:56 2026
-Acceleration in x: 2.9274 at: Mon Feb 23 15:02:52 2026
-Acceleration in y: 2.58058 at: Mon Feb 23 15:02:53 2026
-Acceleration in z: 5.01849 at: Mon Feb 23 15:02:53 2026
-Rate of rotation in x: 17.4656 at: Mon Feb 23 15:02:52 2026
-Rate of rotation in y: 22.9008 at: Mon Feb 23 15:02:52 2026
-Rate of rotation in z: 15.0611 at: Mon Feb 23 15:02:48 2026
+Temperature: 27.5734 at: Fri Feb 27 10:18:10 2026
+Acceleration in x: 0.0758117 at: Fri Feb 27 10:18:25 2026
+Acceleration in y: 0.0286532 at: Fri Feb 27 10:18:10 2026
+Acceleration in z: 1.19926 at: Fri Feb 27 10:18:15 2026
+Rate of rotation in x: 0.129771 at: Fri Feb 27 10:18:30 2026
+Rate of rotation in y: 0.0687023 at: Fri Feb 27 10:17:55 2026
+Rate of rotation in z: 0.0992366 at: Fri Feb 27 10:18:25 2026
 
 MINIMUMS
-Temperature: 28.3371 at: Mon Feb 23 15:02:32 2026
-Acceleration in x: -8.23422 at: Mon Feb 23 15:02:53 2026
-Acceleration in y: -1.33775 at: Mon Feb 23 15:02:53 2026
-Acceleration in z: -1.98901 at: Mon Feb 23 15:02:53 2026
-Rate of rotation in x: -20.5038 at: Mon Feb 23 15:02:53 2026
-Rate of rotation in y: -18.1908 at: Mon Feb 23 15:02:53 2026
-Rate of rotation in z: -24.9084 at: Mon Feb 23 15:02:53 2026
+Temperature: 27.4985 at: Fri Feb 27 10:17:50 2026
+Acceleration in x: 0.0710361 at: Fri Feb 27 10:17:55 2026
+Acceleration in y: 0.0196991 at: Fri Feb 27 10:18:30 2026
+Acceleration in z: 1.18971 at: Fri Feb 27 10:17:50 2026
+Rate of rotation in x: 0.0381679 at: Fri Feb 27 10:18:25 2026
+Rate of rotation in y: 0.0229008 at: Fri Feb 27 10:18:25 2026
+Rate of rotation in z: 0.0839695 at: Fri Feb 27 10:17:50 2026
