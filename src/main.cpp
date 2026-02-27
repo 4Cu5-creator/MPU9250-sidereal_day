@@ -3,6 +3,10 @@
 #include <vector>
 #include <fstream> // For file input/output
 
+// Linux terminal control headers for detecting raw key presses
+#include <termios.h>
+#include <unistd.h>
+
 //MakeFile
 #include "../inc/i2c.h"
 #include "../inc/timer.h"
@@ -23,6 +27,29 @@ int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz)
 double gyro_x[Num_Reads];
 double gyro_y[Num_Reads];
 double gyro_z[Num_Reads];
+
+// --- Helper Function to Wait for Spacebar ---
+void waitForSpace() {
+    std::cout << "Press the SPACEBAR to begin the next read..." << std::flush;
+    
+    struct termios oldt, newt;
+    // Get current terminal attributes
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    
+    // Disable canonical mode (buffering) and echo
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    char ch;
+    do {
+        ch = getchar();
+    } while (ch != ' '); // Keep looping until the space character is pressed
+
+    // Restore original terminal attributes
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    std::cout << "\n";
+}
 
 int main(int argc, char* argv[])
 {
@@ -52,6 +79,9 @@ int main(int argc, char* argv[])
     for (int i = 0; i < Num_Reads; i++) {
         std::cout << "\n--- Starting Read " << (i + 1) << " of " << Num_Reads << " ---\n";
 
+        // Wait for the user to press the space key
+        waitForSpace();
+
         // Variables to hold the results from this specific read
         double current_gx, current_gy, current_gz;
 
@@ -60,7 +90,6 @@ int main(int argc, char* argv[])
             csv_file.close();
             return -3;
         }
-
 
         //Saving Data in Array
         gyro_x[i] = current_gx;
@@ -82,15 +111,14 @@ int main(int argc, char* argv[])
 
     if (angular_velocity < 0) {
        std::cout << "Calculation is incorrect\n";
-       return -5; 
+       return -5;
     }
-    
-    std::cout << angular_velocity << " rad/s\n" << std::endl; 
-    
-    double sid_day = sidereal_day(angular_velocity); 
-    
-    std::cout << "A sidereal day is " << sid_day << " hours long.\n" << std::endl; 
 
+    std::cout << angular_velocity << " rad/s\n" << std::endl;
+
+    double sid_day = sidereal_day(angular_velocity);
+
+    std::cout << "A sidereal day is " << sid_day << " hours long.\n" << std::endl;
 
     // Close the file when done
     csv_file.close();
@@ -124,7 +152,7 @@ int read_main(int device_handle, double& out_gx, double& out_gy, double& out_gz 
         double gx = get_gyro_x(device_handle);
         double gy = get_gyro_y(device_handle);
         double gz = get_gyro_z(device_handle);
-        
+
         //Deg/s --> Rad/s
         gx = deg2rad(gx);
         gy = deg2rad(gy);
